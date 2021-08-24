@@ -545,3 +545,9 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_BOOT_JARS += \
     WfdCommon
+
+# isen feature
+$(call inherit-product, vendor/isen/isen.mk)
+
+PRODUCT_COPY_FILES += \
+		      vendor/isen/init_shell/init_shell.sh:system/bin/init_shell.sh

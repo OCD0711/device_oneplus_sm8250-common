@@ -23,16 +23,16 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/oneplus/sm8250-common/sm8250-common-vendor.mk)
 
-# Inherit packages from vendor/oneplus/addons/camera 
+# Inherit packages from vendor/oneplus/addons/camera
 $(call inherit-product, vendor/oneplus/addons/camera/camera-vendor.mk)
-
-# Device uses high-density artwork where available
-PRODUCT_AAPT_CONFIG := normal
-PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 
 # Additional native libraries
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/misc/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
+
+# Device uses high-density artwork where available
+PRODUCT_AAPT_CONFIG := normal
+PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += \
@@ -400,16 +400,16 @@ PRODUCT_PACKAGES += \
     libOmxVenc \
     libstagefrighthw
 
+# OPFeature
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/odm/odm_feature_list:$(TARGET_COPY_OUT_ODM)/etc/odm_feature_list
+
 # OnePlus
 PRODUCT_PACKAGES += \
     oneplus-fwk.oneplus_kona
 
 PRODUCT_BOOT_JARS += \
     oneplus-fwk.oneplus_kona
-
-# OPFeature
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/odm/odm_feature_list:$(TARGET_COPY_OUT_ODM)/etc/odm_feature_list
 
 # Power
 PRODUCT_PACKAGES += \

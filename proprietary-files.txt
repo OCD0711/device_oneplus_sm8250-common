@@ -752,8 +752,8 @@ vendor/firmware/ipa_uc.elf
 vendor/firmware/ipa_uc.mdt
 
 # Iris
-vendor/bin/hw/vendor.pixelworks.hardware.feature.irisfeature-service
 vendor/bin/hw/vendor.pixelworks.hardware.display.iris-service
+vendor/bin/hw/vendor.pixelworks.hardware.feature.irisfeature-service
 vendor/etc/init/vendor.pixelworks.hardware.display.iris-service.rc
 vendor/etc/init/vendor.pixelworks.hardware.feature.irisfeature-service.rc
 vendor/etc/inparm/irissoft/mcfCheck.txt

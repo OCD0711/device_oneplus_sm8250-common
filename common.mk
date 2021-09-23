@@ -431,6 +431,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     RemovePackages
 
+# OCD SU
+PRODUCT_PACKAGES += \
+    ocd
+
 # RIL
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full \

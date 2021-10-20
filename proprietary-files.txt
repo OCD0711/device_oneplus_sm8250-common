@@ -458,6 +458,7 @@ vendor/lib64/libsdmcore.so
 vendor/lib64/libsdmutils.so
 
 # Display (SDM)
+system_ext/lib64/libsmomo.qti.so
 vendor/lib64/libdisplayqos.so
 vendor/lib64/libdisplayskuutils.so
 vendor/lib64/libqseed3.so

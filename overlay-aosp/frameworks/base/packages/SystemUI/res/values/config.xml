@@ -1,6 +1,5 @@
 <!--
-     Copyright (C) 2020 The LineageOS Project
-
+     Copyright (C) 2015-2019 Lineage
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
@@ -14,20 +13,23 @@
      limitations under the License.
 -->
 <resources>
-
-    <!-- Allow devices to hide ringer button above volume slider -->
-    <bool name="config_hideRingerButton">true</bool>
-
     <!-- Burn-in protection -->
     <bool name="config_statusBarBurnInProtection">true</bool>
-    <integer name="config_shift_interval">30</integer>
+    <integer name="config_shift_interval">40</integer>
+
+    <!-- Color of the FOD view -->
+    <color name="config_fodColor">#ffffe6</color>
+    <color name="config_fodColorBackground">#00000000</color>
 
     <!-- Allow devices override audio panel location to the left side -->
     <bool name="config_audioPanelOnLeftSide">true</bool>
 
-    <!-- Color of the FOD view -->
-    <color name="config_fodColor">#ffffe6</color>
-    
-    <!-- The bottom margin of the keyguard security container -->
-    <dimen name="kg_security_container_min_bottom_margin">664px</dimen>
+    <!-- Whether usage of the proximity sensor during doze is supported -->
+    <bool name="doze_proximity_sensor_supported">false</bool>
+
+    <!-- Allow devices to hide ringer button above volume slider -->
+    <bool name="config_hideRingerButton">true</bool>
+
+    <!-- Biometric Prompt -->
+    <dimen name="biometric_dialog_fod_margin">125dp</dimen>
 </resources>

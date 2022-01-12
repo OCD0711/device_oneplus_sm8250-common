@@ -19,4 +19,4 @@ ro.product.locale=zh-CN
 # SetupWizard Disable
 ro.setupwizard.mode=DISABLED
 # 4G only
-ro.telephony.default_network=11
+ro.telephony.default_network=24

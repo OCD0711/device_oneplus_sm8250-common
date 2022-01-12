@@ -251,6 +251,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     DeviceSettings
 
+# KeyHandler
+PRODUCT_PACKAGES += \
+    KeyHandler
+
 # Display
 PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@3.0-impl-qti-display \
@@ -422,9 +426,16 @@ PRODUCT_PACKAGES += \
 PRODUCT_BOOT_JARS += \
     oneplus-fwk.oneplus_kona
 
+# OnePlus Apps
+PRODUCT_PACKAGES += \
+    OPSoundTunerOverlay \
+    OnePlusCameraOverlay \
+    OnePlusGalleryOverlay
+
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power-service-qti \
+    android.hardware.power.stats@1.0-service.mock \
     vendor.qti.hardware.perf@2.0.vendor \
     vendor.qti.hardware.perf@2.1.vendor \
     vendor.qti.hardware.perf@2.2.vendor

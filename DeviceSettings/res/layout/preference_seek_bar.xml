@@ -72,6 +72,7 @@
                 android:textColor="?android:attr/textColorSecondary"
                 android:maxLines="10"
                 android:ellipsize="end" />
+
         </RelativeLayout>
 
         <LinearLayout
@@ -88,7 +89,7 @@
                 android:layout_weight="1"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp" />
-        </LinearLayout>
 
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

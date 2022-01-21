@@ -25,9 +25,9 @@ import androidx.preference.PreferenceManager;
 
 import org.havoc.device.DeviceSettings.DeviceSettings;
 
-public class GameModeSwitch implements OnPreferenceChangeListener {
+public class DCModeSwitch implements OnPreferenceChangeListener {
 
-    private static final String FILE = "/proc/touchpanel/force_game_switch_enable";
+    private static final String FILE = "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/drm/card0/card0-DSI-1/dimlayer_bl_en";
 
     public static String getFile() {
         if (Utils.fileWritable(FILE)) {

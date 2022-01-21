@@ -27,7 +27,6 @@ import android.content.res.Resources;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -50,42 +49,25 @@ import androidx.preference.PreferenceScreen;
 import androidx.preference.TwoStatePreference;
 
 import org.havoc.device.DeviceSettings.FileUtils;
-import org.havoc.device.DeviceSettings.doze.DozeSettingsActivity;
 import org.havoc.device.DeviceSettings.FPSInfoService;
-import org.havoc.device.DeviceSettings.kcal.KCalSettingsActivity;
-import org.havoc.device.DeviceSettings.DolbySwitch;
 
 public class DeviceSettings extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
 
-    public static final String PREF_DEVICE_KCAL = "device_kcal";
-    public static final String CATEGORY_DISPLAY = "display";
+    public static final String KEY_DC_SWITCH = "dc";
     public static final String KEY_HBM_SWITCH = "hbm";
     public static final String KEY_AUTO_HBM_SWITCH = "auto_hbm";
     public static final String KEY_AUTO_HBM_THRESHOLD = "auto_hbm_threshold";
     public static final String KEY_FPS_INFO = "fps_info";
     public static final String KEY_VIBSTRENGTH = "vib_strength";
-    public static final String KEY_GAME_SWITCH = "game_mode";
+    public static final String KEY_SETTINGS_PREFIX = "device_setting_";
 
-    private static final String PREF_DOZE = "advanced_doze_settings";
-    private static final String KEY_ENABLE_DOLBY_ATMOS = "enable_dolby_atmos";
-
-    private static final String FILE_LEVEL = "/sys/devices/platform/soc/a8c000.i2c/i2c-3/3-005a/leds/vibrator/level";
-    private static final long testVibrationPattern[] = {0,50};
-    public static final String DEFAULT = "3";
-
-    private DolbySwitch mDolbySwitch;
-    private Preference mDozeSettings;
     private static SwitchPreference mFpsInfo;
+    private static TwoStatePreference mDCModeSwitch;
     private static TwoStatePreference mHBMModeSwitch;
-    private static TwoStatePreference mGameModeSwitch;
     private static TwoStatePreference mAutoHBMSwitch;
-    private static TwoStatePreference mEnableDolbyAtmos;
-    private Preference mKcal;
 
-    private ProperSeekBarPreference mVibratorStrengthPreference;
-
-    private Vibrator mVibrator;
+    private VibratorStrengthPreference mVibratorStrength;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -102,6 +84,16 @@ public class DeviceSettings extends PreferenceFragment
 
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mVibratorStrength = (VibratorStrengthPreference) findPreference(KEY_VIBSTRENGTH);
+        if (mVibratorStrength == null || !VibratorStrengthPreference.isSupported()) {
+            getPreferenceScreen().removePreference((Preference) findPreference("vibrator"));
+        }
+
+        mDCModeSwitch = (TwoStatePreference) findPreference(KEY_DC_SWITCH);
+        mDCModeSwitch.setEnabled(DCModeSwitch.isSupported());
+        mDCModeSwitch.setChecked(DCModeSwitch.isCurrentlyEnabled(this.getContext()));
+        mDCModeSwitch.setOnPreferenceChangeListener(new DCModeSwitch());
+
         mHBMModeSwitch = (TwoStatePreference) findPreference(KEY_HBM_SWITCH);
         mHBMModeSwitch.setEnabled(HBMModeSwitch.isSupported());
         mHBMModeSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(DeviceSettings.KEY_HBM_SWITCH, false));
@@ -111,51 +103,9 @@ public class DeviceSettings extends PreferenceFragment
         mAutoHBMSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(DeviceSettings.KEY_AUTO_HBM_SWITCH, false));
         mAutoHBMSwitch.setOnPreferenceChangeListener(this);
 
-        mDozeSettings = (Preference)findPreference(PREF_DOZE);
-        mDozeSettings.setOnPreferenceClickListener(preference -> {
-            Intent intent = new Intent(getActivity().getApplicationContext(), DozeSettingsActivity.class);
-            startActivity(intent);
-            return true;
-        });
-
         mFpsInfo = (SwitchPreference) findPreference(KEY_FPS_INFO);
         mFpsInfo.setChecked(isFPSOverlayRunning());
         mFpsInfo.setOnPreferenceChangeListener(this);
-
-        mDolbySwitch = new DolbySwitch(this.getContext());
-        mEnableDolbyAtmos = (TwoStatePreference) findPreference(KEY_ENABLE_DOLBY_ATMOS);
-        mEnableDolbyAtmos.setChecked(mDolbySwitch.isCurrentlyEnabled());
-        mEnableDolbyAtmos.setOnPreferenceChangeListener(this);
-
-        mKcal = findPreference(PREF_DEVICE_KCAL);
-        mKcal.setOnPreferenceClickListener(preference -> {
-            Intent intent = new Intent(getActivity().getApplicationContext(), KCalSettingsActivity.class);
-            startActivity(intent);
-            return true;
-        });
-
-        mGameModeSwitch = (TwoStatePreference) findPreference(KEY_GAME_SWITCH);
-        if (GameModeSwitch.isSupported()) {
-            mGameModeSwitch.setEnabled(true);
-        } else {
-            mGameModeSwitch.setEnabled(false);
-            mGameModeSwitch.setSummary(getString(R.string.unsupported_feature));
-        }
-        mGameModeSwitch.setChecked(GameModeSwitch.isCurrentlyEnabled(this.getContext()));
-        mGameModeSwitch.setOnPreferenceChangeListener(new GameModeSwitch());
-
-        mVibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-        mVibratorStrengthPreference =  (ProperSeekBarPreference) findPreference(KEY_VIBSTRENGTH);
-        if (Utils.fileWritable(FILE_LEVEL)) {
-            mVibratorStrengthPreference.setValue(sharedPrefs.getInt(KEY_VIBSTRENGTH,
-                Integer.parseInt(Utils.getFileValue(FILE_LEVEL, DEFAULT))));
-            mVibratorStrengthPreference.setOnPreferenceChangeListener(this);
-        } else {
-            mVibratorStrengthPreference.setEnabled(false);
-            mVibratorStrengthPreference.setSummary(getString(R.string.unsupported_feature));
-        }
     }
 
     @Override
@@ -176,8 +126,6 @@ public class DeviceSettings extends PreferenceFragment
             } else {
                 this.getContext().stopService(fpsinfo);
             }
-        } else if (preference == mEnableDolbyAtmos) {
-            mDolbySwitch.setEnabled((Boolean) newValue);
         } else if (preference == mAutoHBMSwitch) {
             Boolean enabled = (Boolean) newValue;
             SharedPreferences.Editor prefChange = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
@@ -193,12 +141,6 @@ public class DeviceSettings extends PreferenceFragment
             } else {
                 this.getContext().stopService(hbmIntent);
             }
-        } else if (preference == mVibratorStrengthPreference) {
-            int value = Integer.parseInt(newValue.toString());
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-            sharedPrefs.edit().putInt(KEY_VIBSTRENGTH, value).commit();
-            Utils.writeValue(FILE_LEVEL, String.valueOf(value));
-            mVibrator.vibrate(testVibrationPattern, -1);
         }
         return true;
     }
@@ -209,15 +151,6 @@ public class DeviceSettings extends PreferenceFragment
 
     public static boolean isAUTOHBMEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(DeviceSettings.KEY_AUTO_HBM_SWITCH, false);
-    }
-
-    public static void restoreVibStrengthSetting(Context context) {
-        if (Utils.fileWritable(FILE_LEVEL)) {
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            int value = sharedPrefs.getInt(KEY_VIBSTRENGTH,
-                Integer.parseInt(Utils.getFileValue(FILE_LEVEL, DEFAULT)));
-            Utils.writeValue(FILE_LEVEL, String.valueOf(value));
-        }
     }
 
     @Override
